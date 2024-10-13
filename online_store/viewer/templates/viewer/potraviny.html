@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+    <h2>Kategorie</h2>
+    {% for category in all_category %}
+    <br>{{ category.name }}
+    {% endfor %}
+
+    <h2>Produkty</h2>
+    {% for product in all_product %}
+    <br>Název: {{ product.title }}
+    <br>Info: {{ product.description }}
+    <br>Kategorie: {{ product.category }}
+    
+    <br>Speciálně: {% for feature in product.features.all %} {{ feature.feature_name }} {% endfor %}
+    
+    <a href="{% url 'potraviny_detail' product.pk %}">zobrazit detail</a>
+    <a href="{% url 'potraviny-update-view' product.pk %}">Update potravina</a>
+    <a href="{% url 'potraviny-delete-view' product.pk %}">Delete potravina</a>
+    {% endfor %}
+
+    <h2>Formulář</h2>
+    <a href="{% url 'potraviny-create-view' %}">Create potravina</a>
+
+{% endblock %}

@@ -1,0 +1,13 @@
+<nav>
+    <ul class="nav justify-content-center">
+        <li class="nav-item"><a class="nav-link" href="{% url 'main-view' %}">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'potraviny-view' %}">Potraviny</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'category-view' %}">Kategorie</a></li>
+        {% if user.is_authenticated %}
+            <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout - {{ user.username }}</a></li>
+        {% else %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'registration' %}">Register</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Log in</a></li>
+        {% endif %}
+    </ul>
+</nav>

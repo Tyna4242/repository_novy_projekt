@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather</title>
+</head>
+<body>
+    <h1>Weather for {{ city }}</h1>
+
+    {% if error %}
+        <p>{{ error }}</p>
+    {% else %}
+        <p>Temperature: {{ temperature }}°C</p>
+        <p>Condition: {{ description }}</p>
+        <img src="http://openweathermap.org/img/wn/{{ icon }}@2x.png" alt="weather icon">
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Stránka potraviny {{ potraviny_detail.title }}</h1>
+<h3>Popisek: {{ potraviny_detail.description }} </h3>
+
+<h2>Komentáře:</h2>
+
+{% for comment in potraviny_comments %}
+
+<p>{{comment.text}}</p>
+
+
+{% endfor %}
+
+
+<a href="{% url 'create_comment' potraviny_detail.pk %}">Přidat komentář</a>
+
+
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<h2>Kategorie</h2>
+
+<ul>
+{% for parent_category in parent_categories %}
+    <li><a href="{% url 'category-detail-view' parent_category.id %}"><strong>{{ parent_category.name }}</strong>  </a> </li>
+        {% for child_category in parent_category.children.all %}
+            <li style="text-indent: 20px;"><a href="{% url 'category-detail-view' child_category.id %}"> {{ child_category.name }} </a> </li>
+        {% endfor %}
+    
+    {% endfor %}
+
+</ul>
+
+{% endblock %}

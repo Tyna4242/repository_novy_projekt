@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+<h2>Produkty v kategorii {{ category.name }}</h2>
+
+
+<form method="GET" action="">
+    <input type="text" name="q" placeholder="Vyhledat produkt">
+    <input type="number" name="min_price" placeholder="Minimální cena">
+    <input type="number" name="max_price" placeholder="Maximální cena">
+    <button type="submit">Hledat</button>
+</form>
+
+
+<ul>
+{% for product in products_detail %}
+    <li> 
+        <a href={% url 'potraviny_detail' product.pk %}>{{ product.title }} </a> </li>
+{% empty %}
+        <li>Žádné produkty v této kategorii.</li>
+{% endfor %}
+
+</ul>
+
+<div class="pagination">
+    <span class="step-links">
+        {% if products_detail.has_previous %}
+            <a href="?page=1">&laquo; První</a>
+            <a href="?page={{ products_detail.previous_page_number }}">Předchozí</a>
+        {% endif %}
+
+        <span class="current">
+            Stránka {{ products_detail.number }} z {{ products_detail.paginator.num_pages }}.
+        </span>
+
+        {% if products_detail.has_next %}
+            <a href="?page={{ products_detail.next_page_number }}">Další</a>
+            <a href="?page={{ products_detail.paginator.num_pages }}">Poslední &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+
+{% endblock %}
