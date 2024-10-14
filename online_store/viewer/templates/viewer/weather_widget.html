@@ -1,21 +1,11 @@
-{% extends "base.html" %}
 
-{% block content %}
-    <h1>Vítejte na stránce</h1>
-    <p>Toto je úvodní text vaší stránky, která rozšiřuje base šablonu.</p>
-    
-    
-
-    {% if weather_info %}
+{% if weather_info %}
     <div class="weather-widget">
         <h3>Weather in {{ weather_info.city }}</h3>
         <p>Temperature: {{ weather_info.temperature }}°C</p>
         <p>Description: {{ weather_info.description }}</p>
         <img src="http://openweathermap.org/img/wn/{{ weather_info.icon }}@2x.png" alt="weather icon">
     </div>
-    {% else %}
-        <p>No weather information available.</p>
-    {% endif %}
-
-
-    {% endblock %}
+{% else %}
+    <p>Weather information is not available.</p>
+{% endif %}

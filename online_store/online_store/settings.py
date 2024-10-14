@@ -130,3 +130,6 @@ LOGIN_REDIRECT_URL = 'potraviny'
 LOGOUT_REDIRECT_URL = 'potraviny'
 
 AUTH_USER_MODEL = 'viewer.CustomUser'
+
+
+OPENWEATHERMAP_API_KEY = 'd5a26e95e1631e59af66c95d5fe21b92'

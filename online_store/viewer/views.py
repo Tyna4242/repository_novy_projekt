@@ -11,11 +11,42 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.http import HttpResponse, JsonResponse
 from django.core.paginator import Paginator
-# Create your views here.
+import requests
+from django.contrib.auth.decorators import login_required
+from django.conf import settings
+
+
 
 class MainPageView(TemplateView):
     template_name = "viewer/main.html"
-    extra_context = {}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Fetch weather info if user is logged in
+        if self.request.user.is_authenticated:
+            user_city = self.request.user.city
+            if user_city:
+                # Fetch weather data from OpenWeatherMap API
+                api_key = settings.OPENWEATHERMAP_API_KEY
+                url = f'http://api.openweathermap.org/data/2.5/weather?q={user_city}&appid={api_key}&units=metric'
+
+                response = requests.get(url)
+                if response.status_code == 200:
+                    weather_data = response.json()
+                    context['weather_info'] = {
+                        'city': weather_data['name'],
+                        'temperature': weather_data['main']['temp'],
+                        'description': weather_data['weather'][0]['description'],
+                        'icon': weather_data['weather'][0]['icon'],
+                    }
+                else:
+                    context['weather_info'] = None  # API call failed, no weather info
+            else:
+                context['weather_info'] = None  # No city defined for the user
+        else:
+         context['weather_info'] = None  # User not authenticated
+
+        return context
 
 class BasePageView(TemplateView):
     template_name = "base.html"
@@ -145,3 +176,6 @@ def api_get_all_products(request):
 def api_get_all_comments(request):
   json_all_comments = { comment.pk: {"text":str(comment.text)} for comment in Comment.objects.all()}
   return JsonResponse(json_all_comments)
+
+
+
