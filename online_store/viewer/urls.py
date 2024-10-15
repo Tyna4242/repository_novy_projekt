@@ -2,6 +2,8 @@ from django.urls import path
 from .views import MainPageView, BasePageView, PotravinyView, ProductCreateView, ProductUpdateView, ProductDeleteView, IndexView, SignUpView, CategoryView
 from .views import PotravinyDetailedView, CommentCreateView, send_email_to_user, api_get_all_products, api_get_all_comments, CategoryDetailView
 from django.contrib.auth.views import LogoutView, LoginView
+from .views import add_to_cart, cart_view, place_order, ThankYouPageView
+
 
 urlpatterns = [
     path('', MainPageView.as_view(), name='main-view'),
@@ -21,4 +23,8 @@ urlpatterns = [
     path('send_emails_to_user', send_email_to_user),
     path('api/product/get_all', api_get_all_products),
     path('api/comment/get_all', api_get_all_comments),
+    path('cart/add/<int:product_id>/', add_to_cart, name='add-to-cart'),
+    path('cart/', cart_view, name='cart-view'),
+    path('cart/order/', place_order, name='place-order'),
+    path('thank-you/', ThankYouPageView.as_view(), name='thank-you'),
 ]

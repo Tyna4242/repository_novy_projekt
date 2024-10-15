@@ -1,9 +1,9 @@
 
 
 # Create your views here.
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, FormView, ListView, DetailView
-from .models import Category, Product, Comment
+from .models import Category, Product, Comment, Order, OrderLine
 from django.urls import reverse_lazy
 from viewer.forms import ProductForm, CommentForm, CustomUserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -14,6 +14,104 @@ from django.core.paginator import Paginator
 import requests
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
+from django.shortcuts import get_object_or_404
+
+
+
+
+from django.contrib import messages
+
+
+def place_order(request):
+    if request.method == 'POST':
+        cart = request.session.get('cart', {})
+        if not cart:
+            messages.error(request, "Váš košík je prázdný!")
+            return redirect('cart_view')
+        
+        user = request.user
+        delivery_address = request.POST.get('delivery_address')
+        user_address = request.POST.get('user_address')
+
+        # Validace vstupu
+        if not delivery_address or not user_address:
+            messages.error(request, "Musíte zadat adresu doručení.")
+            return redirect('potraviny-view')
+
+        # Vytvoření objednávky a její uložení do databáze
+        order = Order(
+            user=user,
+            delivery_address=delivery_address,
+            user_address=user_address,
+            total_cost=calculate_total_cost(cart),
+            status='pending'
+        )
+        order.save()  # Objednávka musí být uložena před přidáním řádků objednávky
+
+        # Vytvoření řádků objednávky
+        for product_id, quantity in cart.items():
+            product = Product.objects.get(id=product_id)
+            OrderLine.objects.create(
+                order=order,  # Teď už objednávka má primární klíč (ID)
+                product=product,
+                number_of_products=quantity,
+                product_price=product.price
+            )
+
+        # Vyprázdnění košíku
+        request.session['cart'] = {}
+        messages.success(request, "Objednávka byla úspěšně vytvořena!")
+        return redirect('thank_you')
+
+
+
+def add_to_cart(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    cart = request.session.get('cart', {})
+
+    if str(product_id) not in cart:
+        cart[str(product_id)] = {
+            'quantity': 1,
+            'price': str(product.price),  # Ensure price is serialized correctly
+        }
+    else:
+        cart[str(product_id)]['quantity'] += 1
+
+    # Save the cart back into the session
+    request.session['cart'] = cart
+
+    # Debug print to check cart contents
+    print(f"Cart contents after adding product {product_id}: {cart}")
+
+    return redirect('cart-view')
+
+
+@login_required
+def cart_view(request):
+    cart = request.session.get('cart', {})
+    products = []
+    total_price = 0
+
+    for product_id, item in cart.items():
+        product = Product.objects.get(pk=product_id)
+        item_total = int(item['quantity']) * float(item['price'])
+        total_price += item_total
+        products.append({
+            'product': product,
+            'quantity': item['quantity'],
+            'total': item_total
+        })
+
+    context = {
+        'products': products,
+        'total_price': total_price,
+    }
+    return render(request, 'viewer/cart.html', context)
+
+
+
+class ThankYouPageView(TemplateView):
+    template_name = "viewer/thank_you.html"
 
 
 

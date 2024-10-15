@@ -16,5 +16,10 @@
 
 <a href="{% url 'create_comment' potraviny_detail.pk %}">Přidat komentář</a>
 
+<form action="{% url 'add-to-cart' potraviny_detail.pk %}" method="POST">
+    {% csrf_token %}
+    <button type="submit">Add to Cart</button>
+</form>
+
 
 {% endblock %}
