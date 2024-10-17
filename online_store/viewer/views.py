@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, FormView, ListView, DetailView
 from .models import Category, Product, Comment, Order, OrderLine
 from django.urls import reverse_lazy
-from viewer.forms import ProductForm, CommentForm, CustomUserCreationForm
+from viewer.forms import ProductForm, CommentForm, CustomUserCreationForm, CustomUserUpdateForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
@@ -15,11 +15,22 @@ import requests
 from django.contrib.auth.decorators import login_required
 from django.conf import settings
 from django.shortcuts import get_object_or_404
-
-
-
-
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
+
+@login_required
+def update_profile(request):
+    if request.method == 'POST':
+        form = CustomUserUpdateForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('main-view')  # Předpokládáme, že máš vytvořenou stránku 'profile'
+    else:
+        form = CustomUserUpdateForm(instance=request.user)
+    return render(request, 'viewer/update_profile.html', {'form': form})
+
+
 
 
 def place_order(request):

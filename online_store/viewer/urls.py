@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import MainPageView, BasePageView, PotravinyView, ProductCreateView, ProductUpdateView, ProductDeleteView, IndexView, SignUpView, CategoryView, ProfileView
-from .views import PotravinyDetailedView, CommentCreateView, send_email_to_user, api_get_all_products, api_get_all_comments, CategoryDetailView
+from .views import PotravinyDetailedView, CommentCreateView, send_email_to_user, api_get_all_products, api_get_all_comments, CategoryDetailView, update_profile
 from django.contrib.auth.views import LogoutView, LoginView
 from .views import add_to_cart, cart_view, place_order, ThankYouPageView
 from django.conf import settings
@@ -30,4 +30,5 @@ urlpatterns = [
     path('cart/order/', place_order, name='place-order'),
     path('thank-you/', ThankYouPageView.as_view(), name='thank-you'),
     path('profil/', ProfileView.as_view(), name='profile'),
+    path('update-profil/', update_profile, name='update-profile'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

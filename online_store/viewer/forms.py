@@ -3,6 +3,15 @@ from viewer.models import Category, Product, Comment, CustomUser
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
+
+
+class CustomUserUpdateForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'avatar', 'city', 'address', 'preferred_communication']  # Přidej další pole, která chceš povolit
+
+
+
 class CustomUserCreationForm(UserCreationForm):
     avatar = forms.ImageField(required=False) 
 
@@ -29,9 +38,6 @@ class CommentForm(ModelForm):
   class Meta:
     model = Comment
     fields = ['text']
-
-
-
 
 
 
