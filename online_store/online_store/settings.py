@@ -133,3 +133,5 @@ AUTH_USER_MODEL = 'viewer.CustomUser'
 
 
 OPENWEATHERMAP_API_KEY = 'd5a26e95e1631e59af66c95d5fe21b92'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

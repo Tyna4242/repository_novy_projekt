@@ -276,4 +276,13 @@ def api_get_all_comments(request):
   return JsonResponse(json_all_comments)
 
 
+from django.views.generic import DetailView
+from .models import CustomUser
 
+class ProfileView(LoginRequiredMixin, DetailView):
+    model = CustomUser
+    template_name = 'viewer/profile.html'
+    context_object_name = 'user_profile'
+
+    def get_object(self):
+        return self.request.user  # Vrátíme aktuálně přihlášeného uživatele

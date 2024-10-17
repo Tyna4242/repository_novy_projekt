@@ -4,6 +4,8 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
 class CustomUserCreationForm(UserCreationForm):
+    avatar = forms.ImageField(required=False) 
+
     class Meta:
         model = CustomUser
         fields = ['username', 'password1', 'password2', 'city', 'address', 'avatar', 'role', 'preferred_communication']
