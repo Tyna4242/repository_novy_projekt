@@ -1,16 +1,20 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Vítejte na stránce</h1>
-    <p>Toto je úvodní text vaší stránky, která rozšiřuje base šablonu.</p>
+    <h1>Vítejte v obchodě s potravinami!</h1>
+    <p>Vítejte v našem online obchodě s potravinami, kde najdete čerstvé a kvalitní potraviny přímo na dosah ruky! Naším cílem je poskytovat vám široký výběr zdravých, chutných a výživných produktů, které potěší vaše chuťové pohárky a usnadní vám každodenní vaření.
+
+        Objevte naši nabídku čerstvého ovoce a zeleniny, lahodných masných výrobků, pečiva a dalších delikates, které pocházejí od prověřených dodavatelů. S důrazem na kvalitu a udržitelnost vám přinášíme to nejlepší z místní výroby i exotických chutí.
+        
+        Nakupování je jednoduché a pohodlné. Prozkoumejte naše kategorie, přidejte oblíbené produkty do košíku a užijte si rychlé dodání přímo k vám domů. Přidejte se k naší komunitě spokojených zákazníků a objevte, jak snadno můžete mít kvalitní potraviny na dosah!</p>
     
     
 
     {% if weather_info %}
     <div class="weather-widget">
-        <h3>Weather in {{ weather_info.city }}</h3>
-        <p>Temperature: {{ weather_info.temperature }}°C</p>
-        <p>Description: {{ weather_info.description }}</p>
+        <h3>Počasí v: {{ weather_info.city }}</h3>
+        <p>Teplota: {{ weather_info.temperature }}°C</p>
+        <p>Popis: {{ weather_info.description }}</p>
         <img src="http://openweathermap.org/img/wn/{{ weather_info.icon }}@2x.png" alt="weather icon">
     </div>
     {% else %}

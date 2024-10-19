@@ -292,7 +292,7 @@ class ProductDeleteView(PermissionRequiredMixin, DeleteView):
     form_class = ProductForm
     model = Product
     success_url = reverse_lazy('potraviny-view')
-    permission_required = 'viewer.potraviny-delete-view'  # Název oprávnění (nahraď 'app_name' názvem své aplikace)
+    permission_required = 'viewer.potraviny-delete-view' 
 
 class IndexView(TemplateView):
     template_name = "index.html"
