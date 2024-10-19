@@ -13,16 +13,30 @@
     <button type="submit">Hledat</button>
 </form>
 
-
-<ul>
-{% for product in products_detail %}
-    <li> 
-        <a href={% url 'potraviny_detail' product.pk %}>{{ product.title }} </a> </li>
-{% empty %}
-        <li>Žádné produkty v této kategorii.</li>
-{% endfor %}
-
-</ul>
+<table border="1" cellspacing="0" cellpadding="10">
+    <thead>
+        <tr>
+            <th>Název produktu</th>
+            <th>Cena</th>
+            <th>Kategorie</th>
+            <th>Detaily</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for product in products_detail %}
+            <tr>
+                <td>{{ product.title }}</td>
+                <td>{{ product.price }} Kč</td>
+                <td>{{ product.category.name }}</td>
+                <td><a href="{% url 'potraviny_detail' product.pk %}">Zobrazit detaily</a></td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td colspan="4">Žádné produkty v této kategorii.</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 <div class="pagination">
     <span class="step-links">
