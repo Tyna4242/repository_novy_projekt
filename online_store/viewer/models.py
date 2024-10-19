@@ -84,8 +84,9 @@ class Order(models.Model):
         return sum(line.get_line_total() for line in self.order_lines.all())
 
     def save(self, *args, **kwargs):
+        super(Order, self).save(*args, **kwargs)
         self.total_cost = self.calculate_total_cost()
-        super().save(*args, **kwargs)
+
 
 
 class OrderLine(models.Model):

@@ -68,7 +68,7 @@ def place_order(request):
         cart = request.session.get('cart', {})
         if not cart:
             messages.error(request, "Váš košík je prázdný!")
-            return redirect('cart_view')
+            return redirect('cart-view')
         
         user = request.user
         delivery_address = request.POST.get('delivery_address')
@@ -96,7 +96,7 @@ def place_order(request):
 
             if product.stock_quantity < quantity:
                 messages.error(request, f"Není dostatek zásob pro {product.title}.")
-                return redirect('cart_view')
+                return redirect('cart-view')
             
             product.stock_quantity -= quantity
             product.save()
@@ -105,7 +105,7 @@ def place_order(request):
                 order=order,  # Teď už objednávka má primární klíč (ID)
                 product=product,
                 quantity=quantity,
-                product_price=product.price
+                price=product.price
             )
 
         # Vyprázdnění košíku
