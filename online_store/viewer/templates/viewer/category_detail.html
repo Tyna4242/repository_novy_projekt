@@ -20,6 +20,8 @@
             <th>Cena</th>
             <th>Kategorie</th>
             <th>Detaily</th>
+            <th>Upravit potravinu</th>
+            <th>Smazat potravinu</th>
         </tr>
     </thead>
     <tbody>
@@ -29,6 +31,8 @@
                 <td>{{ product.price }} Kč</td>
                 <td>{{ product.category.name }}</td>
                 <td><a href="{% url 'potraviny_detail' product.pk %}">Zobrazit detaily</a></td>
+                <td><a href="{% url 'potraviny-update-view' product.pk %}">Update potravina</a></td>
+                <td><a href="{% url 'potraviny-delete-view' product.pk %}">Delete potravina</a></td>
             </tr>
         {% empty %}
             <tr>

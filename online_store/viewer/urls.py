@@ -9,7 +9,6 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('', MainPageView.as_view(), name='main-view'),
-    path('potraviny/', PotravinyView.as_view(), name='potraviny-view'),
     path('category/', CategoryView.as_view(), name='category-view'),
     path('category/<int:pk>', CategoryDetailView.as_view(), name='category-detail-view'),
     path('base/', BasePageView.as_view(), name='base-view'),
