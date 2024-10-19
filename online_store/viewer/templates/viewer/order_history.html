@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Order History</h2>
+
+{% if orders %}
+  <ul>
+    {% for order in orders %}
+      <li>
+        <strong>Order ID:</strong> {{ order.id }} <br>
+        <strong>Total Cost:</strong> {{ order.total_cost }} <br>
+        <strong>Delivery Address:</strong> {{ order.delivery_address }} <br>
+        <strong>Date of Submission:</strong> {{ order.order_date }} <br>
+        <strong>Status:</strong> {{ order.get_status_display }} <br>
+        <strong>Order Lines:</strong>
+        <ul>
+          {% for line in order.order_lines.all %}
+            <li>{{ line.number_of_products }} x {{ line.product.title }} ({{ line.product_price }})</li>
+          {% endfor %}
+        </ul>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>You have no orders.</p>
+{% endif %}
+{% endblock %}

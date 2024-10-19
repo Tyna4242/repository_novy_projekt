@@ -14,8 +14,11 @@
     <p><strong>Total Price:</strong> {{ total_price }}</p>
 
     <!-- Button to Place Order -->
-    <form action="{% url 'place-order' %}" method="POST">
+    <form action="{% url 'place_order' %}" method="POST">
         {% csrf_token %}
+        <label for="delivery_address">Delivery Address:</label>
+        <input type="text" id="delivery_address" name="delivery_address" placeholder="Enter delivery address" required>
+
         <button type="submit">Place Order</button>
     </form>
 

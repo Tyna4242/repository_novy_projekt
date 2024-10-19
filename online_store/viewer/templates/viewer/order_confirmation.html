@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h1>Order Confirmation</h1>
+<p>Your order has been successfully placed!</p>
+<p>Order ID: {{ order.id }}</p>
+<p>Delivery Address: {{ order.delivery_address }}</p>
+<p>Order Date: {{ order.order_date }}</p>
+<ul>
+    {% for line in order.orderline_set.all %}
+        <li>{{ line.quantity }} x {{ line.product.title }} - {{ line.get_line_total }}</li>
+    {% endfor %}
+</ul>
+<p>Total Cost: {{ order.total_cost }}</p>
+<a href="{% url 'order_history' %}">View Order History</a>
+
+{% endblock %}

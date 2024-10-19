@@ -17,6 +17,22 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from .models import Order 
+
+
+
+
+class OrderHistoryView(LoginRequiredMixin, ListView):
+    model = Order
+    template_name = 'viewer/order_history.html'
+    context_object_name = 'orders'
+
+    def get_queryset(self):
+        # Načtení objednávek aktuálně přihlášeného uživatele
+        return Order.objects.filter(user=self.request.user).order_by('-order_date')
+
+
+
 
 
 @login_required
@@ -31,7 +47,11 @@ def update_profile(request):
     return render(request, 'viewer/update_profile.html', {'form': form})
 
 
-
+def calculate_total_cost(cart):
+    total = 0
+    for product_id, item in cart.items():
+        total += item['quantity'] * float(item['price'])
+    return total
 
 def place_order(request):
     if request.method == 'POST':
@@ -42,30 +62,39 @@ def place_order(request):
         
         user = request.user
         delivery_address = request.POST.get('delivery_address')
-        user_address = request.POST.get('user_address')
 
         # Validace vstupu
-        if not delivery_address or not user_address:
+        if not delivery_address:
             messages.error(request, "Musíte zadat adresu doručení.")
             return redirect('potraviny-view')
+
 
         # Vytvoření objednávky a její uložení do databáze
         order = Order(
             user=user,
             delivery_address=delivery_address,
-            user_address=user_address,
             total_cost=calculate_total_cost(cart),
             status='pending'
         )
-        order.save()  # Objednávka musí být uložena před přidáním řádků objednávky
+
+        order.save()
 
         # Vytvoření řádků objednávky
-        for product_id, quantity in cart.items():
+        for product_id, item in cart.items():
             product = Product.objects.get(id=product_id)
+            quantity = item['quantity']
+
+            if product.stock_quantity < quantity:
+                messages.error(request, f"Není dostatek zásob pro {product.title}.")
+                return redirect('cart_view')
+            
+            product.stock_quantity -= quantity
+            product.save()
+
             OrderLine.objects.create(
                 order=order,  # Teď už objednávka má primární klíč (ID)
                 product=product,
-                number_of_products=quantity,
+                quantity=quantity,
                 product_price=product.price
             )
 
@@ -118,6 +147,15 @@ def cart_view(request):
         'total_price': total_price,
     }
     return render(request, 'viewer/cart.html', context)
+
+
+
+
+
+@login_required
+def order_confirmation(request, order_id):
+    order = Order.objects.get(id=order_id, user=request.user)
+    return render(request, 'viewer/order_confirmation.html', {'order': order})
 
 
 
