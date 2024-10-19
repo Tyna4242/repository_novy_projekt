@@ -2,6 +2,13 @@
 
 {% block content %}
 
+<head>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+
+</head>
+
 
 <h2>Kategorie</h2>
 
@@ -13,7 +20,7 @@
 </form>
 
 
-<ul>
+<ul id="category-list">
 {% for parent_category in parent_categories %}
     <li><a href="{% url 'category-detail-view' parent_category.id %}"><strong>{{ parent_category.name }}</strong>  </a> </li>
         {% for child_category in parent_category.children.all %}
@@ -23,5 +30,33 @@
     {% endfor %}
 
 </ul>
+
+<script>
+    $(function() {
+        $('#category-list').sortable({
+            items: 'li',  // Make all list items sortable
+            update: function(event, ui) {
+                let categoryIds = $(this).sortable('toArray').map(id => id.split('-')[1]); // Extract IDs from the sorted list
+    
+                $.ajax({
+                    url: '{% url "update_category_order" %}',  // Your URL to handle the POST request
+                    type: 'POST',
+                    data: {
+                        'category_ids[]': categoryIds,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'  // Include CSRF token
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            alert('Kategorie byly úspěšně aktualizovány!');
+                        }
+                    },
+                    error: function() {
+                        alert('Při aktualizaci kategorií došlo k chybě.');
+                    }
+                });
+            }
+        });
+    });
+    </script>
 
 {% endblock %}

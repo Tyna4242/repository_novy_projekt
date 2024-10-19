@@ -18,6 +18,16 @@ from django.shortcuts import get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Order 
+from django.views.decorators.http import require_POST
+
+@require_POST
+def update_category_order(request):
+    category_ids = request.POST.getlist('category_ids[]')  # Get the list of category IDs from the POST request
+    for index, category_id in enumerate(category_ids):
+        category = Category.objects.get(id=category_id)
+        category.order = index  # Update the order field
+        category.save()
+    return JsonResponse({'success': True})
 
 
 
