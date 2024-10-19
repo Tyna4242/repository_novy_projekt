@@ -297,15 +297,19 @@ class ProductUpdateView(UpdateView):
     success_url = reverse_lazy('category-view')
 
 
-class ProductDeleteView(PermissionRequiredMixin, DeleteView):
-    template_name = 'viewer/product_confirm_delete.html'
-    form_class = ProductForm
+class ProductDeleteView(DeleteView):
     model = Product
+    template_name = 'viewer/product_confirm_delete.html'
     success_url = reverse_lazy('category-view')
-    permission_required = 'viewer.potraviny-delete-view' 
+ 
 
 class IndexView(TemplateView):
     template_name = "index.html"
+    extra_context = {}
+
+
+class Index2View(TemplateView):
+    template_name = "index2.html"
     extra_context = {}
 
 class SignUpView(CreateView):

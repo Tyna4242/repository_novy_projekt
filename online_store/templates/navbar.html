@@ -1,13 +1,13 @@
 <nav>
     <ul class="nav justify-content-center">
-        <li class="nav-item"><a class="nav-link" href="{% url 'main-view' %}">Domů</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'category-view' %}">Kategorie</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'main-view' %}">Domů</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'category-view' %}">Kategorie</a></li>
         {% if user.is_authenticated %}
-            <li><a href="{% url 'profile' %}">Můj profil</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout - {{ user.username }}</a></li>
+            <li><a href="{% url 'profile' %}">Můj profil</a></li>
             <li><a href="{% url 'cart-view' %}">Můj košík</a></li>
         {% else %}
-          <li class="nav-item"><a class="nav-link" href="{% url 'registration' %}">Register</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'registration' %}">Register</a></li>
             <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Log in</a></li>
         {% endif %}
     </ul>
