@@ -5,6 +5,14 @@
 
 <h2>Kategorie</h2>
 
+
+
+<form method="GET" action="">
+    <input type="text" name="q" placeholder="Vyhledat kategorii">
+    <button type="submit">Hledat</button>
+</form>
+
+
 <ul>
 {% for parent_category in parent_categories %}
     <li><a href="{% url 'category-detail-view' parent_category.id %}"><strong>{{ parent_category.name }}</strong>  </a> </li>

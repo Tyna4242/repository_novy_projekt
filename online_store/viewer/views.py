@@ -206,6 +206,9 @@ class PotravinyView(TemplateView):
         'all_product': Product.objects.all()
     }
 
+
+from django.db.models import Q
+
 class CategoryView(ListView):
     model = Category
     template_name = "viewer/category.html"
@@ -213,9 +216,20 @@ class CategoryView(ListView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Získání všech parent kategorií (ty, které nemají parent kategorie)
-        context['parent_categories'] = Category.objects.filter(parent__isnull=True).prefetch_related('children')
+        
+        categories = Category.objects.filter(parent__isnull=True).prefetch_related('children')
+
+        query = self.request.GET.get('q')
+        if query:
+            categories = categories.filter(Q(name__icontains=query) | Q(children__name__icontains=query)).distinct()
+        
+        paginator = Paginator(categories, 10)  # Počet kategorií na stránku
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        
+        context['parent_categories'] = page_obj
         return context
+
 
 class CategoryDetailView(DetailView):
    model = Category
