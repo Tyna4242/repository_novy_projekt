@@ -76,7 +76,7 @@ def place_order(request):
         # Validace vstupu
         if not delivery_address:
             messages.error(request, "Musíte zadat adresu doručení.")
-            return redirect('potraviny-view')
+            return redirect('cart-view')
 
 
         # Vytvoření objednávky a její uložení do databáze
@@ -287,21 +287,21 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     template_name = 'viewer/form.html'
     form_class = ProductForm
     model = Product
-    success_url = reverse_lazy('potraviny-view')
+    success_url = reverse_lazy('category-view')
 
 
 class ProductUpdateView(UpdateView):
     template_name = 'viewer/form.html'
     form_class = ProductForm
     model = Product
-    success_url = reverse_lazy('potraviny-view')
+    success_url = reverse_lazy('category-view')
 
 
 class ProductDeleteView(PermissionRequiredMixin, DeleteView):
     template_name = 'viewer/product_confirm_delete.html'
     form_class = ProductForm
     model = Product
-    success_url = reverse_lazy('potraviny-view')
+    success_url = reverse_lazy('category-view')
     permission_required = 'viewer.potraviny-delete-view' 
 
 class IndexView(TemplateView):
@@ -318,7 +318,7 @@ class SignUpView(CreateView):
 class CommentCreateView(CreateView):
   template_name = 'viewer/form.html'
   form_class = CommentForm
-  success_url = reverse_lazy("potraviny")
+  success_url = reverse_lazy("category-view")
 
   def form_valid(self, form):
     new_comment : Comment = form.save(commit=False)
