@@ -13,3 +13,51 @@
 .carousel-item {
     height: 400px; /* Set height to match the carousel container */
 }
+
+
+
+#nav, .navbar-brand {
+    text-align: center; /* Ujistěte se, že je text zarovnán na střed */
+}
+
+.navbar-nav, .navbar-brand {
+    justify-content: center; /* Zajišťuje, že nav-link prvky jsou také zarovnány na střed */
+}
+
+
+a, li, h1, p {
+    font-family: "Inter", sans-serif;
+  font-optical-sizing: auto;
+  }
+
+
+
+
+
+
+  #category-list {
+    list-style-type: none; /* Odstraní výchozí seznam */
+    padding: 0; /* Odstraní výchozí odsazení */
+}
+
+#category-list > li {
+    font-size: 18px; /* Zvětší velikost písma pro rodičovské kategorie */
+    margin: 10px 0; /* Přidá mezery mezi položkami */
+}
+
+#category-list .child-category {
+    text-indent: 20px; /* Odsazení pro podkategorie */
+    font-size: 16px; /* Menší písmo pro podkategorie */
+    color: #555; /* Šedá barva textu pro podkategorie */
+}
+
+#category-list a {
+    text-decoration: none; /* Odstraní podtržení textu */
+    color: #007bff; /* Barva odkazu */
+    transition: color 0.3s; /* Hladký přechod barvy */
+}
+
+#category-list a:hover {
+    color: black; /* Tmavší modrá barva při najetí myší */
+}
+

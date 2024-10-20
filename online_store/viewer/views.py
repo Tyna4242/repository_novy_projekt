@@ -20,6 +20,9 @@ from django.contrib.auth.decorators import login_required
 from .models import Order 
 from django.views.decorators.http import require_POST
 
+
+
+
 @require_POST
 def update_category_order(request):
     category_ids = request.POST.getlist('category_ids[]')  # Get the list of category IDs from the POST request
