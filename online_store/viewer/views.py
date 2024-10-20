@@ -54,7 +54,7 @@ def update_profile(request):
         form = CustomUserUpdateForm(request.POST, request.FILES, instance=request.user)
         if form.is_valid():
             form.save()
-            return redirect('main-view')  # Předpokládáme, že máš vytvořenou stránku 'profile'
+            return redirect('profile') 
     else:
         form = CustomUserUpdateForm(instance=request.user)
     return render(request, 'viewer/update_profile.html', {'form': form})
@@ -285,25 +285,25 @@ class PotravinyDetailedView(TemplateView):
     context["potraviny_comments"] = Comment.objects.filter(product__pk=int(kwargs["pk"]))
     return context
 
-
-class ProductCreateView(LoginRequiredMixin, CreateView):
+class ProductCreateView( LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     template_name = 'viewer/form.html'
     form_class = ProductForm
     model = Product
     success_url = reverse_lazy('category-view')
+    permission_required = 'viewer.create_product'
 
-
-class ProductUpdateView(UpdateView):
+class ProductUpdateView( LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
     template_name = 'viewer/form.html'
     form_class = ProductForm
     model = Product
     success_url = reverse_lazy('category-view')
+    permission_required = 'viewer.update_product'
 
-
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     model = Product
     template_name = 'viewer/product_confirm_delete.html'
     success_url = reverse_lazy('category-view')
+    permission_required = 'viewer.delete_product'
  
 
 class IndexView(TemplateView):

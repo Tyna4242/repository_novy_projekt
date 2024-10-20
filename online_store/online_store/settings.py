@@ -126,8 +126,8 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-LOGIN_REDIRECT_URL = 'potraviny'
-LOGOUT_REDIRECT_URL = 'potraviny'
+LOGIN_REDIRECT_URL = 'main-view'
+LOGOUT_REDIRECT_URL = 'main-view'
 
 AUTH_USER_MODEL = 'viewer.CustomUser'
 
@@ -135,4 +135,5 @@ AUTH_USER_MODEL = 'viewer.CustomUser'
 OPENWEATHERMAP_API_KEY = 'd5a26e95e1631e59af66c95d5fe21b92'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
