@@ -43,10 +43,9 @@
 
     {% if weather_info %}
     <div class="weather-widget">
-        <h3>Počasí v: {{ weather_info.city }}</h3>
+        <h5>Počasí v: {{ weather_info.city }}</h5>
         <p>Teplota: {{ weather_info.temperature }}°C</p>
         <p>Popis: {{ weather_info.description }}</p>
-        <img src="http://openweathermap.org/img/wn/{{ weather_info.icon }}@2x.png" alt="weather icon">
     </div>
     {% else %}
         <p>No weather information available.</p>

@@ -10,7 +10,7 @@
     <input type="text" name="q" placeholder="Vyhledat produkt">
     <input type="number" name="min_price" placeholder="Minimální cena">
     <input type="number" name="max_price" placeholder="Maximální cena">
-    <button type="submit">Hledat</button>
+    <button type="submit" class="btn btn-outline-dark">Hledat</button>
 </form>
 
 <table border="1" cellspacing="0" cellpadding="10" class="table table-striped-columns">
@@ -42,7 +42,7 @@
     </tbody>
 </table>
 
-<a href="{% url 'potraviny-create-view' %}">Create potravina</a>
+<a class="btn btn-outline-dark" href="{% url 'potraviny-create-view' %}">Create potravina</a>
 
 <div class="pagination">
     <span class="step-links">
