@@ -13,7 +13,7 @@
     <button type="submit">Hledat</button>
 </form>
 
-<table border="1" cellspacing="0" cellpadding="10">
+<table border="1" cellspacing="0" cellpadding="10" class="table table-striped-columns">
     <thead>
         <tr>
             <th>Název produktu</th>
@@ -24,7 +24,7 @@
             <th>Smazat potravinu</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="table-group-divider">
         {% for product in products_detail %}
             <tr>
                 <td>{{ product.title }}</td>

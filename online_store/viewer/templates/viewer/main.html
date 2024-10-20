@@ -1,14 +1,45 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1>Vítejte v obchodě s potravinami!</h1>
-    <p>Vítejte v našem online obchodě s potravinami, kde najdete čerstvé a kvalitní potraviny přímo na dosah ruky! Naším cílem je poskytovat vám široký výběr zdravých, chutných a výživných produktů, které potěší vaše chuťové pohárky a usnadní vám každodenní vaření.
+    <h1 style="text-align: center;">Vítejte v obchodě s potravinami!</h1>
+    <p style="text-align: center;">Vítejte v našem online obchodě s potravinami, kde najdete čerstvé a kvalitní potraviny přímo na dosah ruky! Naším cílem je poskytovat vám široký výběr zdravých, chutných a výživných produktů, které potěší vaše chuťové pohárky a usnadní vám každodenní vaření.
 
         Objevte naši nabídku čerstvého ovoce a zeleniny, lahodných masných výrobků, pečiva a dalších delikates, které pocházejí od prověřených dodavatelů. S důrazem na kvalitu a udržitelnost vám přinášíme to nejlepší z místní výroby i exotických chutí.
         
         Nakupování je jednoduché a pohodlné. Prozkoumejte naše kategorie, přidejte oblíbené produkty do košíku a užijte si rychlé dodání přímo k vám domů. Přidejte se k naší komunitě spokojených zákazníků a objevte, jak snadno můžete mít kvalitní potraviny na dosah!</p>
     
-    
+        <main>
+            <div id="hero-carousel" class="carousel slide" data-bs-ride="carousel">
+              <div class="carousel-indicators">
+                <button type="button" data-bs-target="#hero-carousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#hero-carousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#hero-carousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+              </div>
+              <div class="carousel-inner">
+                <div class="carousel-item active c-item">
+                  <img src="https://www.nopek.cz/userfiles/products/rohlik-43g__prd-110-13.jpg" class="d-block w-100 c-img" alt="...">
+                  <div class="carousel-caption d-none d-md-block">
+                    <h5>Rohlík</h5>
+                    <p>Čerstvé pečivo přímo z pece.</p>
+                  </div>
+                </div>
+                <div class="carousel-item c-item">
+                  <img src="https://static.albert.cz/medias/sys_master/h2d/h0d/9014885810206.jpg?buildNumber=f4c20738a44c731b8b2318dabb6b46253d8f1ef02356572602bfa024d110b58c&imwidth=320" class="d-block w-100 c-img" alt="...">
+                </div>
+                <div class="carousel-item c-item">
+                  <img src="https://sdmikulov.e-coop.cz/pub/media/catalog/product/cache/5e943ec86580054ec2fda73128d751b9/e/p/ep_1000027612_1.jpeg" class="d-block w-100 c-img" alt="...">
+                </div>
+              </div>
+              <button class="carousel-control-prev" type="button" data-bs-target="#hero-carousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+                <span class="visually-hidden">Previous</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#hero-carousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+                <span class="visually-hidden">Next</span>
+              </button>
+            </div>
+          </main>
 
     {% if weather_info %}
     <div class="weather-widget">

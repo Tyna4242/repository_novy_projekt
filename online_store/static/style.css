@@ -1,0 +1,15 @@
+#hero-carousel {
+    max-height: 400px; /* Set the max height for the carousel */
+    overflow: hidden;
+}
+
+/* Adjust the images inside the carousel */
+.c-img {
+    max-height: 100%; /* Scale image height based on carousel height */
+    max-width: 100%; /* Scale image width to fit within carousel */
+    object-fit: contain; /* Ensure the entire image is visible and not cut off */
+}
+
+.carousel-item {
+    height: 400px; /* Set height to match the carousel container */
+}
