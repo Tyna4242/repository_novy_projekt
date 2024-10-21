@@ -15,16 +15,22 @@
         </li>
         {% endfor %}
     </ul>
-    <p><strong>Total Price:</strong> {{ total_price }}</p>
+
+    
+
 
     <!-- Button to Place Order -->
     <form action="{% url 'place_order' %}" method="POST">
         {% csrf_token %}
         <label for="delivery_address">Delivery Address:</label>
         <input type="text" id="delivery_address" name="delivery_address" placeholder="Enter delivery address" required>
+        <label for="promo_code">Promo Code:</label>
+        <input type="text" name="promo_code" id="promo_code" placeholder="Enter promo code">
 
         <button type="submit" class="btn btn-secondary">Place Order</button>
     </form>
+    
+    <p><strong>Total Price:</strong> {{ total_price }}</p>
 
 {% else %}
     <p>Your cart is empty!</p>

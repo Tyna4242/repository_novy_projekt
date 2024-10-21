@@ -4,6 +4,11 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 
 
+class PromoCodeForm(forms.Form):
+    promo_code = forms.CharField(max_length=50, label='Promo Code')
+
+
+
 
 class CustomUserUpdateForm(forms.ModelForm):
     class Meta:

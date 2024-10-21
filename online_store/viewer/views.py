@@ -3,7 +3,7 @@
 # Create your views here.
 from django.shortcuts import render, redirect
 from django.views.generic import TemplateView, CreateView, UpdateView, DeleteView, FormView, ListView, DetailView
-from .models import Category, Product, Comment, Order, OrderLine
+from .models import Category, Product, Comment, Order, OrderLine, PromoCode
 from django.urls import reverse_lazy
 from viewer.forms import ProductForm, CommentForm, CustomUserCreationForm, CustomUserUpdateForm
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -19,6 +19,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Order 
 from django.views.decorators.http import require_POST
+from django.contrib import messages
 
 
 
@@ -70,52 +71,71 @@ def place_order(request):
     if request.method == 'POST':
         cart = request.session.get('cart', {})
         if not cart:
-            messages.error(request, "Váš košík je prázdný!")
+            messages.error(request, "Your cart is empty!")
             return redirect('cart-view')
-        
+
         user = request.user
         delivery_address = request.POST.get('delivery_address')
+        promo_code_input = request.POST.get('promo_code')
 
-        # Validace vstupu
+        # Validate promo code
+        promo_code = None
+        if promo_code_input:
+            try:
+                promo_code = PromoCode.objects.get(code=promo_code_input)
+                if not promo_code.is_valid():
+                    messages.error(request, "Promo code is invalid or expired.")
+                    return redirect('cart-view')
+            except PromoCode.DoesNotExist:
+                messages.error(request, "Promo code does not exist.")
+                return redirect('cart-view')
+
+        # Calculate total cost
+        total_cost = calculate_total_cost(cart)
+
+        # Apply discount if a valid promo code is used
+        if promo_code:
+            total_cost = promo_code.apply_discount(total_cost)
+            promo_code.times_used += 1
+            promo_code.save()
+
+        # Validate address
         if not delivery_address:
-            messages.error(request, "Musíte zadat adresu doručení.")
+            messages.error(request, "You must provide a delivery address.")
             return redirect('cart-view')
 
-
-        # Vytvoření objednávky a její uložení do databáze
-        order = Order(
+        # Create the order
+        order = Order.objects.create(
             user=user,
             delivery_address=delivery_address,
-            total_cost=calculate_total_cost(cart),
-            status='pending'
+            total_cost=total_cost,
+            status='pending',
+            promo_code=promo_code_input if promo_code else None  # Save the used promo code
         )
 
-        order.save()
-
-        # Vytvoření řádků objednávky
+        # Create order lines and update stock
         for product_id, item in cart.items():
             product = Product.objects.get(id=product_id)
             quantity = item['quantity']
 
             if product.stock_quantity < quantity:
-                messages.error(request, f"Není dostatek zásob pro {product.title}.")
+                messages.error(request, f"Not enough stock for {product.title}.")
                 return redirect('cart-view')
-            
+
             product.stock_quantity -= quantity
             product.save()
 
             OrderLine.objects.create(
-                order=order,  # Teď už objednávka má primární klíč (ID)
+                order=order,
                 product=product,
                 quantity=quantity,
                 price=product.price
             )
 
-        # Vyprázdnění košíku
+        # Clear the cart
         request.session['cart'] = {}
-        messages.success(request, "Objednávka byla úspěšně vytvořena!")
+        messages.success(request, "Your order has been successfully placed!")
         return redirect('thank_you')
-
 
 
 def add_to_cart(request, product_id):
