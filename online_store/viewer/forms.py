@@ -9,7 +9,6 @@ class PromoCodeForm(forms.Form):
 
 
 
-
 class CustomUserUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser

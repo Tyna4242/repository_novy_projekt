@@ -17,9 +17,6 @@
     </ul>
 
     
-
-
-    <!-- Button to Place Order -->
     <form action="{% url 'place_order' %}" method="POST">
         {% csrf_token %}
         <label for="delivery_address">Delivery Address:</label>

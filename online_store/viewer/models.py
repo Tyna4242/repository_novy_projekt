@@ -43,14 +43,14 @@ class CustomUser(AbstractUser):
     address = models.CharField(max_length=255, blank=True, null=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     
-    # Role field: ADMIN or USER
+    
     ROLE_CHOICES = [
         ('ADMIN', 'Admin'),
         ('USER', 'User'),
     ]
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='USER')
 
-    # Preferred communication channel: mail or email
+    
     COMMUNICATION_CHOICES = [
         ('mail', 'Mail'),
         ('email', 'Email'),

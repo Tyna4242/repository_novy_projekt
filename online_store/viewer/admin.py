@@ -2,10 +2,8 @@ from django.contrib import admin
 
 # Register your models here.
 
-from .models import Category, Product, PotravinyFeatures, Comment, CustomUser, Order, OrderLine
-
+from .models import Category, Product, PotravinyFeatures, Comment, CustomUser, Order, OrderLine, PromoCode
 from django.contrib import admin
-from .models import PromoCode
 
 @admin.register(PromoCode)
 class PromoCodeAdmin(admin.ModelAdmin):
@@ -14,7 +12,6 @@ class PromoCodeAdmin(admin.ModelAdmin):
     list_filter = ('active', 'expiration_date')
 
 
-# Register your models here
 admin.site.register(Product)
 admin.site.register(Category)
 admin.site.register(PotravinyFeatures)

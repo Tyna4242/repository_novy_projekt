@@ -26,10 +26,10 @@ from django.contrib import messages
 
 @require_POST
 def update_category_order(request):
-    category_ids = request.POST.getlist('category_ids[]')  # Get the list of category IDs from the POST request
+    category_ids = request.POST.getlist('category_ids[]') 
     for index, category_id in enumerate(category_ids):
         category = Category.objects.get(id=category_id)
-        category.order = index  # Update the order field
+        category.order = index  
         category.save()
     return JsonResponse({'success': True})
 
@@ -42,7 +42,7 @@ class OrderHistoryView(LoginRequiredMixin, ListView):
     context_object_name = 'orders'
 
     def get_queryset(self):
-        # Načtení objednávek aktuálně přihlášeného uživatele
+        
         return Order.objects.filter(user=self.request.user).order_by('-order_date')
 
 
@@ -78,7 +78,7 @@ def place_order(request):
         delivery_address = request.POST.get('delivery_address')
         promo_code_input = request.POST.get('promo_code')
 
-        # Validate promo code
+        
         promo_code = None
         if promo_code_input:
             try:
@@ -145,15 +145,15 @@ def add_to_cart(request, product_id):
     if str(product_id) not in cart:
         cart[str(product_id)] = {
             'quantity': 1,
-            'price': str(product.price),  # Ensure price is serialized correctly
+            'price': str(product.price),  
         }
     else:
         cart[str(product_id)]['quantity'] += 1
 
-    # Save the cart back into the session
+    
     request.session['cart'] = cart
 
-    # Debug print to check cart contents
+    
     print(f"Cart contents after adding product {product_id}: {cart}")
 
     return redirect('cart-view')
