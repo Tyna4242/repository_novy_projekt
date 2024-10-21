@@ -1,19 +1,20 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Stránka potraviny {{ potraviny_detail.title }}</h1>
-<h3>Popisek: {{ potraviny_detail.description }} </h3>
-<img src="{{ potraviny_detail.thumbnail.url }}" alt="{{potraviny_detail.title}}">
+<h1 style="text-align: center;">Stránka potraviny {{ potraviny_detail.title }}</h1>
+<h3 style="text-align: center;">Popisek: {{ potraviny_detail.description }} </h3>
+<img style="display: block; margin-left: auto; margin-right: auto;" src="{{ potraviny_detail.thumbnail.url }}" alt="{{potraviny_detail.title}}">
 
-<h2>Komentáře:</h2>
+<h2 style="text-align: center;">Komentáře:</h2>
 
 {% for comment in potraviny_comments %}
 
-<p>{{comment.text}}</p>
+<p class="fw-bolder" style="text-align: center;">{{comment.text}}</p>
 
 
 {% endfor %}
 
+{% if user.is_authenticated %}
 
 <a href="{% url 'create_comment' potraviny_detail.pk %}">Přidat komentář</a>
 
@@ -21,6 +22,8 @@
     {% csrf_token %}
     <button type="submit">Add to Cart</button>
 </form>
+{% else %}
+{% endif %}
 
 
 {% endblock %}

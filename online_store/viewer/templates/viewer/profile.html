@@ -2,20 +2,27 @@
 
 {% block content %}
 
-<h1>Můj profil</h1>
-<div>
+<h1 style="text-align: center;">Můj profil</h1>
+<div style="text-align: center;">
     <p><strong>Uživatelské jméno:</strong> {{ user_profile.username }}</p>
     <p><strong>Město:</strong> {{ user_profile.city }}</p>
     <p><strong>Adresa:</strong> {{ user_profile.address }}</p>
     <p><strong>Email:</strong> {{ user_profile.email }}</p>
+    <p><strong>Role:</strong> {{ user_profile.role }}</p>
     {% if user_profile.avatar %}
         <img src="{{ user_profile.avatar.url }}" alt="Avatar" width="150">
     {% else %}
         <p>Žádný avatar</p>
     {% endif %}
 </div>
-
-<a href="{% url 'update-profile' %}">Update profile</a>
-<br><a href="{% url 'order_history' %}">Order History</a>
-
+<br>
+<div style="text-align: center;">
+<a class="btn btn-info" href="{% url 'update-profile' %}">Update profile</a>
+<br>
+<br>
+<a class="btn btn-info" href="{% url 'order_history' %}">Order History</a>
+</div>
 {% endblock %}
+
+<br>
+<br>

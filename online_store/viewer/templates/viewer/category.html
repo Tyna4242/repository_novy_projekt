@@ -3,6 +3,7 @@
 {% block content %}
 
 <head>
+    <link rel="stylesheet" href="static/style.css">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
@@ -19,15 +20,11 @@
     <button type="submit" class="btn btn-outline-success">Hledat</button>
 </form>
 
-
-  
-
-
-<ul id="category-list">
+<ul id="category-list" >
 {% for parent_category in parent_categories %}
     <li><a href="{% url 'category-detail-view' parent_category.id %}"><strong>{{ parent_category.name }}</strong>  </a> </li>
         {% for child_category in parent_category.children.all %}
-            <li style="text-indent: 20px;"><a href="{% url 'category-detail-view' child_category.id %}"> {{ child_category.name }} </a> </li>
+            <li class="child-category" style="text-indent: 20px;"><a href="{% url 'category-detail-view' child_category.id %}"> {{ child_category.name }} </a> </li>
         {% endfor %}
     
     {% endfor %}
@@ -37,7 +34,7 @@
 <script>
     $(function() {
         $('#category-list').sortable({
-            items: 'li',  // Make all list items sortable
+            items: 'li',  
             update: function(event, ui) {
                 let categoryIds = $(this).sortable('toArray').map(id => id.split('-')[1]); // Extract IDs from the sorted list
     
@@ -46,7 +43,7 @@
                     type: 'POST',
                     data: {
                         'category_ids[]': categoryIds,
-                        'csrfmiddlewaretoken': '{{ csrf_token }}'  // Include CSRF token
+                        'csrfmiddlewaretoken': '{{ csrf_token }}'  
                     },
                     success: function(response) {
                         if (response.success) {
