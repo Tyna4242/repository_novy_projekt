@@ -12,7 +12,7 @@ class PromoCodeForm(forms.Form):
 class CustomUserUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'email', 'avatar', 'city', 'address', 'preferred_communication']  # Přidej další pole, která chceš povolit
+        fields = ['username', 'email', 'avatar', 'city', 'address', 'preferred_communication'] 
 
 
 

@@ -20,33 +20,174 @@ from django.contrib.auth.decorators import login_required
 from .models import Order 
 from django.views.decorators.http import require_POST
 from django.contrib import messages
+from django.db.models import Q
+from django.views.generic import DetailView
+from .models import CustomUser
 
 
 
 
-@require_POST
-def update_category_order(request):
-    category_ids = request.POST.getlist('category_ids[]') 
-    for index, category_id in enumerate(category_ids):
-        category = Category.objects.get(id=category_id)
-        category.order = index  
-        category.save()
-    return JsonResponse({'success': True})
 
+class MainPageView(TemplateView):
+    template_name = "viewer/main.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Fetch weather info if user is logged in
+        if self.request.user.is_authenticated:
+            user_city = self.request.user.city
+            if user_city:
+                # Fetch weather data from OpenWeatherMap API
+                api_key = settings.OPENWEATHERMAP_API_KEY
+                url = f'http://api.openweathermap.org/data/2.5/weather?q={user_city}&appid={api_key}&units=metric'
 
+                response = requests.get(url)
+                if response.status_code == 200:
+                    weather_data = response.json()
+                    context['weather_info'] = {
+                        'city': weather_data['name'],
+                        'temperature': weather_data['main']['temp'],
+                        'description': weather_data['weather'][0]['description'],
+                        'icon': weather_data['weather'][0]['icon'],
+                    }
+                else:
+                    context['weather_info'] = None  # API call failed, no weather info
+            else:
+                context['weather_info'] = None  # No city defined for the user
+        else:
+         context['weather_info'] = None  # User not authenticated
 
-class OrderHistoryView(LoginRequiredMixin, ListView):
-    model = Order
-    template_name = 'viewer/order_history.html'
-    context_object_name = 'orders'
+        return context
 
-    def get_queryset(self):
+class BasePageView(TemplateView):
+    template_name = "base.html"
+    extra_context = {}
+
+class PotravinyView(TemplateView):
+    template_name = "viewer/potraviny.html"
+    extra_context = {
+        'all_category': Category.objects.all(),
+        'all_product': Product.objects.all()
+    }
+
+class CategoryView(ListView):
+    model = Category
+    template_name = "viewer/category.html"
+    context_object_name = 'categories'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         
-        return Order.objects.filter(user=self.request.user).order_by('-order_date')
+        categories = Category.objects.filter(parent__isnull=True).prefetch_related('children')
+
+        query = self.request.GET.get('q')
+        if query:
+            categories = categories.filter(Q(name__icontains=query) | Q(children__name__icontains=query)).distinct()
+        
+        paginator = Paginator(categories, 10)  # Počet kategorií na stránku
+        page_number = self.request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        
+        context['parent_categories'] = page_obj
+        return context
 
 
+class CategoryDetailView(DetailView):
+   model = Category
+   template_name = 'viewer/category_detail.html'
+   extra_context = {
+        'all_category': Category.objects.all(),
+        'all_product': Product.objects.all()
+    }
+   
 
+   def get_context_data(self, **kwargs):
+      context = super().get_context_data(**kwargs)
+      products = Product.objects.filter(category=self.object)
+      
+      query = self.request.GET.get('q')
+      if query:
+         products = products.filter(title__icontains=query)
+     
+      min_price = self.request.GET.get('min_price')
+      max_price = self.request.GET.get('max_price')
+
+      if min_price:
+            products = products.filter(price__gte=min_price)
+      if max_price:
+            products = products.filter(price__lte=max_price)
+
+      paginator = Paginator(products, 10)
+      page_number = self.request.GET.get('page')
+      page_obj = paginator.get_page(page_number)
+      context['products_detail'] = page_obj
+      return context
+
+
+class PotravinyDetailedView(TemplateView):
+  template_name = 'viewer/potraviny_detail.html'
+
+  def get_context_data(self, **kwargs):
+    context = super().get_context_data( **kwargs)
+    context["potraviny_detail"] = Product.objects.get(pk=int(kwargs["pk"]))
+    context["potraviny_comments"] = Comment.objects.filter(product__pk=int(kwargs["pk"]))
+    return context
+
+class ProductCreateView( LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    template_name = 'viewer/form.html'
+    form_class = ProductForm
+    model = Product
+    success_url = reverse_lazy('category-view')
+    permission_required = 'viewer.create_product'
+
+class ProductUpdateView( LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    template_name = 'viewer/form.html'
+    form_class = ProductForm
+    model = Product
+    success_url = reverse_lazy('category-view')
+    permission_required = 'viewer.update_product'
+
+class ProductDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    model = Product
+    template_name = 'viewer/product_confirm_delete.html'
+    success_url = reverse_lazy('category-view')
+    permission_required = 'viewer.delete_product'
+ 
+
+class IndexView(TemplateView):
+    template_name = "index.html"
+    extra_context = {}
+
+
+class Index2View(TemplateView):
+    template_name = "index2.html"
+    extra_context = {}
+
+class SignUpView(CreateView):
+  template_name = 'viewer/form.html'
+  form_class = CustomUserCreationForm
+  success_url = reverse_lazy('login')
+
+class ProfileView(LoginRequiredMixin, DetailView):
+    model = CustomUser
+    template_name = 'viewer/profile.html'
+    context_object_name = 'user_profile'
+
+    def get_object(self):
+        return self.request.user  # Vrátíme aktuálně přihlášeného uživatele
+
+  
+class CommentCreateView(CreateView):
+  template_name = 'viewer/form.html'
+  form_class = CommentForm
+  success_url = reverse_lazy("category-view")
+
+  def form_valid(self, form):
+    new_comment : Comment = form.save(commit=False)
+    new_comment.product = Product.objects.get(pk=int(self.kwargs["product_pk"]))
+    new_comment.save()
+    return super().form_valid(form)
+  
 
 
 @login_required
@@ -183,8 +324,6 @@ def cart_view(request):
 
 
 
-
-
 @login_required
 def order_confirmation(request, order_id):
     order = Order.objects.get(id=order_id, user=request.user)
@@ -196,163 +335,27 @@ class ThankYouPageView(TemplateView):
     template_name = "viewer/thank_you.html"
 
 
+class OrderHistoryView(LoginRequiredMixin, ListView):
+    model = Order
+    template_name = 'viewer/order_history.html'
+    context_object_name = 'orders'
 
-class MainPageView(TemplateView):
-    template_name = "viewer/main.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        # Fetch weather info if user is logged in
-        if self.request.user.is_authenticated:
-            user_city = self.request.user.city
-            if user_city:
-                # Fetch weather data from OpenWeatherMap API
-                api_key = settings.OPENWEATHERMAP_API_KEY
-                url = f'http://api.openweathermap.org/data/2.5/weather?q={user_city}&appid={api_key}&units=metric'
-
-                response = requests.get(url)
-                if response.status_code == 200:
-                    weather_data = response.json()
-                    context['weather_info'] = {
-                        'city': weather_data['name'],
-                        'temperature': weather_data['main']['temp'],
-                        'description': weather_data['weather'][0]['description'],
-                        'icon': weather_data['weather'][0]['icon'],
-                    }
-                else:
-                    context['weather_info'] = None  # API call failed, no weather info
-            else:
-                context['weather_info'] = None  # No city defined for the user
-        else:
-         context['weather_info'] = None  # User not authenticated
-
-        return context
-
-class BasePageView(TemplateView):
-    template_name = "base.html"
-    extra_context = {}
-
-class PotravinyView(TemplateView):
-    template_name = "viewer/potraviny.html"
-    extra_context = {
-        'all_category': Category.objects.all(),
-        'all_product': Product.objects.all()
-    }
-
-
-from django.db.models import Q
-
-class CategoryView(ListView):
-    model = Category
-    template_name = "viewer/category.html"
-    context_object_name = 'categories'
+    def get_queryset(self):
+        
+        return Order.objects.filter(user=self.request.user).order_by('-order_date')
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        
-        categories = Category.objects.filter(parent__isnull=True).prefetch_related('children')
-
-        query = self.request.GET.get('q')
-        if query:
-            categories = categories.filter(Q(name__icontains=query) | Q(children__name__icontains=query)).distinct()
-        
-        paginator = Paginator(categories, 10)  # Počet kategorií na stránku
-        page_number = self.request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-        
-        context['parent_categories'] = page_obj
-        return context
 
 
-class CategoryDetailView(DetailView):
-   model = Category
-   template_name = 'viewer/category_detail.html'
-   extra_context = {
-        'all_category': Category.objects.all(),
-        'all_product': Product.objects.all()
-    }
-   
-
-   def get_context_data(self, **kwargs):
-      context = super().get_context_data(**kwargs)
-      products = Product.objects.filter(category=self.object)
-      
-      query = self.request.GET.get('q')
-      if query:
-         products = products.filter(title__icontains=query)
-     
-      min_price = self.request.GET.get('min_price')
-      max_price = self.request.GET.get('max_price')
-
-      if min_price:
-            products = products.filter(price__gte=min_price)
-      if max_price:
-            products = products.filter(price__lte=max_price)
-
-      paginator = Paginator(products, 10)
-      page_number = self.request.GET.get('page')
-      page_obj = paginator.get_page(page_number)
-      context['products_detail'] = page_obj
-      return context
+@require_POST
+def update_category_order(request):
+    category_ids = request.POST.getlist('category_ids[]') 
+    for index, category_id in enumerate(category_ids):
+        category = Category.objects.get(id=category_id)
+        category.order = index  
+        category.save()
+    return JsonResponse({'success': True})
 
 
-class PotravinyDetailedView(TemplateView):
-  template_name = 'viewer/potraviny_detail.html'
-
-  def get_context_data(self, **kwargs):
-    context = super().get_context_data( **kwargs)
-    context["potraviny_detail"] = Product.objects.get(pk=int(kwargs["pk"]))
-    context["potraviny_comments"] = Comment.objects.filter(product__pk=int(kwargs["pk"]))
-    return context
-
-class ProductCreateView( LoginRequiredMixin, PermissionRequiredMixin, CreateView):
-    template_name = 'viewer/form.html'
-    form_class = ProductForm
-    model = Product
-    success_url = reverse_lazy('category-view')
-    permission_required = 'viewer.create_product'
-
-class ProductUpdateView( LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
-    template_name = 'viewer/form.html'
-    form_class = ProductForm
-    model = Product
-    success_url = reverse_lazy('category-view')
-    permission_required = 'viewer.update_product'
-
-class ProductDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
-    model = Product
-    template_name = 'viewer/product_confirm_delete.html'
-    success_url = reverse_lazy('category-view')
-    permission_required = 'viewer.delete_product'
- 
-
-class IndexView(TemplateView):
-    template_name = "index.html"
-    extra_context = {}
-
-
-class Index2View(TemplateView):
-    template_name = "index2.html"
-    extra_context = {}
-
-class SignUpView(CreateView):
-  template_name = 'viewer/form.html'
-  form_class = CustomUserCreationForm
-  success_url = reverse_lazy('login')
-
-
-  
-class CommentCreateView(CreateView):
-  template_name = 'viewer/form.html'
-  form_class = CommentForm
-  success_url = reverse_lazy("category-view")
-
-  def form_valid(self, form):
-    new_comment : Comment = form.save(commit=False)
-    new_comment.product = Product.objects.get(pk=int(self.kwargs["product_pk"]))
-    new_comment.save()
-    return super().form_valid(form)
-  
 
 def send_email_to_user(request):
     print(f"Máme nové zboží {Product.objects.all()} ")
@@ -375,14 +378,3 @@ def api_get_all_comments(request):
   json_all_comments = { comment.pk: {"text":str(comment.text)} for comment in Comment.objects.all()}
   return JsonResponse(json_all_comments)
 
-
-from django.views.generic import DetailView
-from .models import CustomUser
-
-class ProfileView(LoginRequiredMixin, DetailView):
-    model = CustomUser
-    template_name = 'viewer/profile.html'
-    context_object_name = 'user_profile'
-
-    def get_object(self):
-        return self.request.user  # Vrátíme aktuálně přihlášeného uživatele
