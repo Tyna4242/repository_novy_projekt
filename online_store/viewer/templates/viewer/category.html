@@ -15,10 +15,12 @@
 <div id="category-list" >
     {% for parent_category in parent_categories %}
         <div>
-            <a href="{% url 'category-detail-view' parent_category.id %}"><strong>{{ parent_category.name }}</strong>  </a> 
+            <a href="{% url 'category-detail-view' parent_category.id %}">
+                <strong>{{ parent_category.name }}</strong>  </a> 
         </div>
          {% for child_category in parent_category.children.all %}
-            <div class="child-category" style="text-indent: 20px;"><a href="{% url 'category-detail-view' child_category.id %}"> {{ child_category.name }} </a>
+            <div class="child-category" style="text-indent: 20px;">
+                <a href="{% url 'category-detail-view' child_category.id %}"> {{ child_category.name }} </a>
             </div>
         {% endfor %}
     
