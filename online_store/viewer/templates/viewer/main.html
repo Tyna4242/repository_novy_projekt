@@ -45,9 +45,9 @@
 
     {% if weather_info %}
     <div class="weather-widget">
-        <h5>Počasí v: {{ weather_info.city }}</h5>
-        <p>Teplota: {{ weather_info.temperature }}°C</p>
-        <p>Popis: {{ weather_info.description }}</p>
+        <h5 >Počasí v: {{ weather_info.city }}</h5>
+        <p style="text-align: left;">Teplota: {{ weather_info.temperature }}°C</p>
+        <p style="text-align: left;">Popis: {{ weather_info.description }}</p>
     </div>
     {% else %}
         <p>No weather information available.</p>
