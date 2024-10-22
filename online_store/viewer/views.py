@@ -26,7 +26,7 @@ from .models import CustomUser
 
 
 
-
+# ZÁKLADNÍ TEMPLATES
 
 class MainPageView(TemplateView):
     template_name = "viewer/main.html"
@@ -69,6 +69,8 @@ class PotravinyView(TemplateView):
         'all_category': Category.objects.all(),
         'all_product': Product.objects.all()
     }
+
+# KATEGORIE
 
 class CategoryView(ListView):
     model = Category
@@ -123,6 +125,7 @@ class CategoryDetailView(DetailView):
       context['products_detail'] = page_obj
       return context
 
+# POTRAVINY 
 
 class PotravinyDetailedView(TemplateView):
   template_name = 'viewer/potraviny_detail.html'
@@ -153,6 +156,7 @@ class ProductDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView)
     success_url = reverse_lazy('category-view')
     permission_required = 'viewer.delete_product'
  
+# ZKOUŠKY BOOTSTRAP
 
 class IndexView(TemplateView):
     template_name = "index.html"
@@ -162,6 +166,9 @@ class IndexView(TemplateView):
 class Index2View(TemplateView):
     template_name = "index2.html"
     extra_context = {}
+
+
+# PROFIL
 
 class SignUpView(CreateView):
   template_name = 'viewer/form.html'
@@ -174,9 +181,22 @@ class ProfileView(LoginRequiredMixin, DetailView):
     context_object_name = 'user_profile'
 
     def get_object(self):
-        return self.request.user  # Vrátíme aktuálně přihlášeného uživatele
+        return self.request.user 
+    
+@login_required
+def update_profile(request):
+    if request.method == 'POST':
+        form = CustomUserUpdateForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile') 
+    else:
+        form = CustomUserUpdateForm(instance=request.user)
+    return render(request, 'viewer/update_profile.html', {'form': form})
 
-  
+
+# KOMENTÁŘ
+
 class CommentCreateView(CreateView):
   template_name = 'viewer/form.html'
   form_class = CommentForm
@@ -188,18 +208,7 @@ class CommentCreateView(CreateView):
     new_comment.save()
     return super().form_valid(form)
   
-
-
-@login_required
-def update_profile(request):
-    if request.method == 'POST':
-        form = CustomUserUpdateForm(request.POST, request.FILES, instance=request.user)
-        if form.is_valid():
-            form.save()
-            return redirect('profile') 
-    else:
-        form = CustomUserUpdateForm(instance=request.user)
-    return render(request, 'viewer/update_profile.html', {'form': form})
+# OBJEDNÁVKY
 
 
 def calculate_total_cost(cart):

@@ -45,8 +45,10 @@
         {% endfor %}
     </tbody>
 </table>
-
+{% if user.is_authenticated %}
 <a class="btn btn-outline-dark" href="{% url 'potraviny-create-view' %}">Create potravina</a>
+{% else %}
+{% endif %}
 
 <div class="pagination">
     <span class="step-links">
