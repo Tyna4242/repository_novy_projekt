@@ -12,17 +12,19 @@
     <button type="submit" class="btn btn-outline-success">Hledat</button>
 </form>
 
-<ul id="category-list" >
+<div id="category-list" >
     {% for parent_category in parent_categories %}
-        <li>
-            <a href="{% url 'category-detail-view' parent_category.id %}"><strong>{{ parent_category.name }}</strong>  </a> </li>
+        <div>
+            <a href="{% url 'category-detail-view' parent_category.id %}"><strong>{{ parent_category.name }}</strong>  </a> 
+        </div>
          {% for child_category in parent_category.children.all %}
-            <li class="child-category" style="text-indent: 20px;"><a href="{% url 'category-detail-view' child_category.id %}"> {{ child_category.name }} </a> </li>
+            <div class="child-category" style="text-indent: 20px;"><a href="{% url 'category-detail-view' child_category.id %}"> {{ child_category.name }} </a>
+            </div>
         {% endfor %}
     
     {% endfor %}
 
-</ul>
+</div>
 
 <script>
     $(function() {
