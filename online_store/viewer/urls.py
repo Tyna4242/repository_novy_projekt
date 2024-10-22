@@ -34,4 +34,4 @@ urlpatterns = [
     path('place-order/', place_order, name='place_order'),
     path('order-history/', OrderHistoryView.as_view(), name='order_history'),
     path('update-category-order/', update_category_order, name='update_category_order'),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),

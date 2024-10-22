@@ -78,17 +78,17 @@ class OrderLineModelTest(TestCase):
         self.user = CustomUser.objects.create_user(username="testuser", password="password")
         category = Category.objects.create(name="Electronics")
         self.product = Product.objects.create(
-            title="Laptop",
-            description="A powerful laptop.",
+            title="rohlik",
+            description="sobotni",
             thumbnail="image.jpg",
             category=category,
-            price=1499.99,
+            price=4,
             stock_quantity=5,
             unit="kg"
         )
         self.order = Order.objects.create(
             user=self.user,
-            delivery_address="123 Main St",
+            delivery_address="hlavni",
             status="pending"
         )
     
@@ -115,8 +115,8 @@ class CommentModelTest(TestCase):
         # Create a category and product
         category = Category.objects.create(name="Electronics")
         self.product = Product.objects.create(
-            title="Smartphone",
-            description="A high-end smartphone.",
+            title="rohlik",
+            description="sobotni",
             thumbnail="image.jpg",
             category=category,
             price=999.99,
